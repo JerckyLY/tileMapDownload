@@ -53,17 +53,17 @@ def downLoad():
     calculateRowAndCol()
 
     rootPath = GlobalConfig["outfolder"]
-    if not os.path.isdir(rootPath):
+    if not os.path.exists(rootPath):
         os.mkdir(rootPath)
     for item in allLevels:
         #创建等级文件夹
         levelDirPath = rootPath +os.path.sep+ str(item["zoom"])
-        if not os.path.isdir(levelDirPath):
+        if not os.path.exists(levelDirPath):
             os.mkdir(levelDirPath)
         #X循环
         for x in tqdm(range(item["startX"],item["endX"]+1)):
             xDirPath = levelDirPath+os.path.sep+str(x)
-            if not os.path.isdir(xDirPath):
+            if not os.path.exists(xDirPath):
                 os.mkdir(xDirPath)
             #y循环
             for y in range(item["startY"],item["endY"]+1):
