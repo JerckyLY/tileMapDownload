@@ -82,7 +82,8 @@ def downLoad():
 def saveImg(imgUrl,path,name):
     try:
         req = urllib.request.Request(imgUrl)
-        req.add_header('User-Agent', random.choice(GlobalConfig["agents"]))  # 换用随机的请求头
+        req.add_header('User-Agent', GlobalConfig["agents"][0])  # 用一个请求头
+        #req.add_header('User-Agent', random.choice(GlobalConfig["agents"]))  # 换用随机的请求头
         img = urllib.request.urlopen(req,timeout=60)
         f = open(path+os.path.sep+name+".png","ab")
         f.write(img.read())
