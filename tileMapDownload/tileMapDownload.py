@@ -67,8 +67,10 @@ def downLoad():
                 os.mkdir(xDirPath)
             #y循环
             for y in range(item["startY"],item["endY"]+1):
-                imgUrl = mapUrl.replace("{z}",str(item["zoom"])).replace("{x}",str(x)).replace("{y}",str(y))
-                saveImg(imgUrl,xDirPath,str(y))
+                #如果不存在就继续下载，存在则不下载
+                if not os.path.exists(xDirPath+os.path.sep+str(y)+".png"):
+                    imgUrl = mapUrl.replace("{z}", str(item["zoom"])).replace("{x}", str(x)).replace("{y}", str(y))
+                    saveImg(imgUrl, xDirPath, str(y))
         print(end='\r')
         print(".............%d等级下载完成..........."%(item["zoom"]))
 
