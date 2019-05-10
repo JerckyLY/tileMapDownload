@@ -15,6 +15,10 @@ mapUrl =""
 
 allLevels = []
 
+#三次回调就跳过
+count = 0
+
+
 #读取配置文件
 def getConfig(filePath):
     with open(filePath,"r",encoding="UTF-8") as jsonFile:
@@ -50,6 +54,7 @@ def calculateRowAndCol():
 
 #下载
 def downLoad():
+    global count
     calculateRowAndCol()
 
     rootPath = GlobalConfig["outfolder"]
@@ -58,19 +63,19 @@ def downLoad():
     for item in allLevels:
         #创建等级文件夹
         levelDirPath = rootPath +os.path.sep+ str(item["zoom"])
-        if not os.path.exists(levelDirPath):
+        if not os.path.isdir(levelDirPath):
             os.mkdir(levelDirPath)
         #X循环
         for x in tqdm(range(item["startX"],item["endX"]+1)):
             xDirPath = levelDirPath+os.path.sep+str(x)
-            if not os.path.exists(xDirPath):
+            if not os.path.isdir(xDirPath):
                 os.mkdir(xDirPath)
             #y循环
             for y in range(item["startY"],item["endY"]+1):
-                #如果不存在就继续下载，存在则不下载
                 if not os.path.exists(xDirPath+os.path.sep+str(y)+".png"):
                     imgUrl = mapUrl.replace("{z}", str(item["zoom"])).replace("{x}", str(x)).replace("{y}", str(y))
                     saveImg(imgUrl, xDirPath, str(y))
+                    count = 0
         print(end='\r')
         print(".............%d等级下载完成..........."%(item["zoom"]))
 
@@ -80,16 +85,22 @@ def downLoad():
 
 #写入图片
 def saveImg(imgUrl,path,name):
+    global count
     try:
+        if(count>=3):
+            return
         req = urllib.request.Request(imgUrl)
-        req.add_header('User-Agent', GlobalConfig["agents"][0])  # 用一个请求头
-        #req.add_header('User-Agent', random.choice(GlobalConfig["agents"]))  # 换用随机的请求头
+        req.add_header('User-Agent', random.choice(GlobalConfig["agents"]))  # 换用随机的请求头
         img = urllib.request.urlopen(req,timeout=60)
+
         f = open(path+os.path.sep+name+".png","ab")
         f.write(img.read())
         f.close()
+        count = 0
     except Exception:
-        saveImg(imgUrl, path, name)
+        if(count<3):
+            count = count + 1
+            saveImg(imgUrl, path, name)
 
 #获取地图地址
 def getMapTile(type):
@@ -102,6 +113,8 @@ def getMapTile(type):
         mapUrl = GlobalConfig["tianditu"]["vec"]
     elif (type == "tianditu_cva"):
         mapUrl = GlobalConfig["tianditu"]["cva"]
+    elif (type == "arcgis"):
+         mapUrl = GlobalConfig["arcgis"]["line"]
     elif(type == "" or type == None):
         print("没有选择下载图层")
         return
@@ -123,4 +136,4 @@ def initConfig():
 
 if __name__ == '__main__':
     initConfig() #初始化配置
-    getMapTile("tianditu_vec")
+    getMapTile("arcgis")
