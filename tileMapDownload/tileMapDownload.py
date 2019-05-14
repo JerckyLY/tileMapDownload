@@ -40,10 +40,10 @@ def calculateRowAndCol():
     allTotal = 0
     for i in range(GlobalConfig[ "startlevel"],GlobalConfig["endlevel"]+1):
         lod = MecatorConfig["lods"][i]
-        startX = math.floor((leftTopX - ox) / (lod["resolution"] * 256));
-        endX = math.floor((rightBottomX - ox) / (lod["resolution"] * 256));
-        startY = math.floor((oy - leftTopY) / (lod["resolution"] * 256));
-        endY = math.floor((oy - rightBottomY) / (lod["resolution"] * 256));
+        startX = math.floor(abs(leftTopX - ox) / (lod["resolution"] * 256));
+        endX = math.floor(abs(rightBottomX - ox) / (lod["resolution"] * 256));
+        startY = math.floor(abs(oy - leftTopY) / (lod["resolution"] * 256));
+        endY = math.floor(abs(oy - rightBottomY) / (lod["resolution"] * 256));
         item = {"zoom":i,"startX":startX,"endX":endX,"startY":startY,"endY":endY}
 
         total = (endX - startX + 1) * (endY - startY + 1);
